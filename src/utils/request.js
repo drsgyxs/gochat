@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { Message } from 'element-ui'
+import NProgress from 'nprogress'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -8,20 +9,23 @@ const service = axios.create({
 
 service.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('Authorization')
-    if (token) config.headers.common['Authorization'] = token
+    NProgress.start()
+    // const token = localStorage.getItem('Authorization')
+    // if (token) config.headers.common['Authorization'] = token
     return config
   },
-  function(error) {
+  error => {
     return Promise.reject(error)
   }
 )
 
 service.interceptors.response.use(
-  res => {
-    return res
+  response => {
+    NProgress.done()
+    return response.data
   },
   error => {
+    NProgress.done()
     let message
     if (error.response.data.error) {
       message = error.response.data.error
@@ -43,12 +47,14 @@ service.interceptors.response.use(
           message = error.response.statusText
       }
     }
-    Message({
-      message,
-      type: 'error',
-      duration: 3 * 1000,
-    })
-    return Promise.resolve(error)
+    if (error.response.status !== 401) {
+      Message({
+        message,
+        type: 'error',
+        duration: 3 * 1000,
+      })
+    }
+    return Promise.reject(error)
   }
 )
 

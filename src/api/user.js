@@ -1,13 +1,17 @@
 import request from '@/utils/request'
 
 export function login(data) {
-  return request.post('/v1/users/login', data)
+  return request.post('/login', data)
 }
 
 export function getUserInfo() {
-  return request.get('/v1/users/me')
+  return request.get('/users/me')
 }
 
 export function register(data) {
-  return request.post('/v1/users/register', data)
+  return request.post('/users', data)
+}
+
+export function saveUser(data) {
+  return request.patch(`/users/${data.userId}`, data)
 }
