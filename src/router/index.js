@@ -33,7 +33,7 @@ const routes = [
   },
   {
     path: '/rooms/:roomId',
-    name: 'room',
+    name: 'Room',
     component: () => import('../views/Room'),
     props: true,
   },
@@ -46,6 +46,18 @@ const routes = [
         path: 'profile',
         name: 'UserProfile',
         component: () => import('@/views/Profile'),
+      },
+    ],
+  },
+  {
+    path: '/',
+    redirect: '/createroom',
+    component: Layout,
+    children: [
+      {
+        path: 'createroom',
+        name: 'CreateRoom',
+        component: () => import('@/views/CreateRoom'),
       },
     ],
   },

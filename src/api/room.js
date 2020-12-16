@@ -11,3 +11,11 @@ export function getRoomInfo(roomId, params) {
     params,
   })
 }
+
+export function getMyRoom(userId) {
+  return request.get(`/rooms/user/${userId}`)
+}
+
+export function createRoom(data) {
+  return request.post('/rooms', data)
+}

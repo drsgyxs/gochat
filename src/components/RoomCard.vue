@@ -1,5 +1,5 @@
 <template>
-  <div class="room-card" @click="enterRoom(room.roomId, room.isPrivate)">
+  <div class="room-card" @click="enterRoom">
     <img
       class="room-cover"
       src="https://rpic.douyucdn.cn/live-cover/roomCover/cover_update/2020/11/19/c9a69e468fb6cdca3aeabb0d014c9e5a.jpg/webpdy1"
@@ -8,9 +8,15 @@
     <div class="room-info">
       <div class="room-name" :title="room.roomName">{{ room.roomName }}</div>
       <div class="room-owner-name">
-        <i class="el-icon-user-solid" />
-        <i v-if="room.isPrivate" class="el-icon-lock" />
-        {{ room.owner.nickname }}
+        <div>
+          <i class="el-icon-user-solid"></i>
+          <i v-if="room.isPrivate" class="el-icon-lock"></i>
+          <span>{{ room.owner.nickname }}</span>
+        </div>
+        <div>
+          <i class="fas fa-fire"></i>
+          <span>{{ room.onlineCount }}</span>
+        </div>
       </div>
     </div>
   </div>
@@ -18,6 +24,7 @@
 
 <script>
 import { getRoomInfo } from '../api/room'
+import { getUserInfo } from '../api/user'
 
 export default {
   props: {
@@ -27,20 +34,38 @@ export default {
     },
   },
   methods: {
-    enterRoom(roomId, isPrivate) {
-      if (isPrivate) {
-        this.$prompt('请输入密码', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          inputType: 'password',
-          inputPattern: /^.+$/,
-          inputErrorMessage: '请输入密码',
-        })
-          .then(({ value }) => {
-            this.validatePasswd(roomId, value)
+    enterRoom() {
+      if (this.room.isPrivate) {
+        getUserInfo()
+          .then(res => {
+            if (res.userId !== this.room.owner.userId) {
+              this.$prompt('请输入密码', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                inputType: 'password',
+                inputPattern: /^.+$/,
+                inputErrorMessage: '请输入密码',
+              })
+                .then(({ value }) => {
+                  this.validatePasswd(this.room.roomId, value)
+                })
+                .catch(() => {})
+            } else {
+              this.$router.push({
+                name: 'Room',
+                params: { roomId: this.room.roomId },
+              })
+            }
           })
-          .catch(() => {})
-      } else this.$router.push({ name: 'room', params: { roomId } })
+          .catch(() => {
+            this.$message.error('请登录')
+          })
+      } else {
+        this.$router.push({
+          name: 'Room',
+          params: { roomId: this.room.roomId },
+        })
+      }
     },
     validatePasswd(roomId, password) {
       getRoomInfo(roomId, {
@@ -48,7 +73,7 @@ export default {
       }).then(res => {
         if (res) {
           this.$router.push({
-            name: 'room',
+            name: 'Room',
             params: {
               roomId,
               password,
@@ -84,6 +109,11 @@ export default {
     .room-owner-name {
       color: #8a8d8f;
       font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      i {
+        margin: 0 3px 0 0;
+      }
     }
   }
 }

@@ -1,7 +1,8 @@
 <template>
-  <div class="message-input">
+  <label class="message-input" for="message-input">
     <textarea
       class="message-input-area"
+      id="message-input"
       cols="30"
       rows="5"
       maxlength="200"
@@ -13,7 +14,7 @@
         Send
       </el-button>
     </div>
-  </div>
+  </label>
 </template>
 
 <script>

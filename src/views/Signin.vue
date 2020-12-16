@@ -44,7 +44,7 @@ import request from '../utils/request'
 import { getCookie } from '../utils/cookie'
 
 export default {
-  name: 'Home',
+  name: 'Signin',
   data() {
     return {
       user: {

@@ -1,5 +1,11 @@
 <template>
   <div class="user-account">
+    <div class="profile-title">
+      <span class="profile-title-icon"></span>
+      <span class="profile-title-text">
+        {{ title }}
+      </span>
+    </div>
     <div class="user-setting-wrap">
       <el-form
         :rules="rules"
@@ -9,7 +15,6 @@
       >
         <el-form-item prop="nickname" label="昵称">
           <el-input
-            style="width: 225px"
             v-model.trim="user.nickname"
             placeholder="你的昵称"
           ></el-input>
@@ -56,6 +61,7 @@ import { getUserInfo, saveUser } from '../../api/user'
 
 export default {
   name: 'Account',
+  props: ['title'],
   data() {
     return {
       user: {
@@ -98,14 +104,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-.user-account {
-  padding: 50px 20px 0;
-  .my-btn {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
-}
-</style>
+<style lang="less" scoped></style>

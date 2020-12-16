@@ -1,10 +1,22 @@
 <template>
   <el-header class="x-header">
     <div class="container">
-      <ul>
-        <li v-if="user">
-          <el-dropdown class="account" trigger="click" @command="handleCommand">
-            <div class="avatar-dropdown">
+      <div class="header-left">
+        <div class="logo">
+          <router-link to="/home" title="首页">
+            <i class="fas fa-hand-middle-finger"></i>
+            gochat
+          </router-link>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="user-info" v-if="user">
+          <el-dropdown
+            class="account-dropdown"
+            trigger="click"
+            @command="handleCommand"
+          >
+            <div class="account-dropdown-avatar">
               <el-avatar :src="user.avatarUrl"></el-avatar>
               <i class="el-icon-arrow-down el-icon--right"></i>
             </div>
@@ -16,28 +28,34 @@
               <el-dropdown-item command="sign-out">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-        </li>
+        </div>
         <template v-else>
-          <li>
+          <div>
             <router-link to="/signin">Sign in</router-link>
-          </li>
-          <li>
+          </div>
+          <div>
             <router-link class="sign-up" to="/signup">Sign up</router-link>
-          </li>
+          </div>
         </template>
-      </ul>
+      </div>
     </div>
   </el-header>
 </template>
 
 <script>
 import { getUserInfo } from '../api/user'
+import { getMyRoom } from '../api/room'
 
 export default {
   name: 'XHeader',
   data() {
     return {
       user: null,
+      commands: {
+        'user-profile': 'UserProfile',
+        'my-room': 'Room',
+        'sign-out': 'Signin',
+      },
     }
   },
   methods: {
@@ -47,7 +65,6 @@ export default {
       })
     },
     handleCommand(command) {
-      console.log(command)
       switch (command) {
         case 'user-profile':
           this.$router.push({
@@ -55,13 +72,35 @@ export default {
           })
           break
         case 'my-room':
-          console.log('my-room')
+          this.enterMyRoom()
           break
         case 'sign-out':
           console.log('sign-out')
           this.$router.push('/signin')
           break
       }
+    },
+    enterMyRoom() {
+      getMyRoom(this.user.userId).then(res => {
+        if (res) {
+          this.$router.push({
+            name: 'Room',
+            params: {
+              roomId: res.roomId,
+            },
+          })
+        } else {
+          this.$confirm('你还未创建房间，立即创建？', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+          })
+            .then(() => {
+              this.$router.push('/createroom')
+            })
+            .catch(() => {})
+        }
+      })
     },
   },
   mounted() {
@@ -70,59 +109,82 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .x-header {
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  backdrop-filter: saturate(180%) blur(5px);
+  background-color: rgba(29, 30, 34, 0.9);
+  border-bottom: 1px solid #555;
+  backdrop-filter: saturate(180%) blur(20px);
   position: sticky;
   top: 0px;
-  z-index: 1000;
   .container {
+    width: 1200px;
     height: 100%;
-    ul {
-      float: right;
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      line-height: 60px;
-      li {
-        list-style: none;
-        float: left;
-        padding-right: 20px;
-        height: 100%;
-        .account {
-          height: 100%;
-          .avatar-dropdown {
-            height: 100%;
-            display: flex;
-            align-items: center;
-          }
-          .avatar-dropdown:hover {
-            cursor: pointer;
-            color: #5584ff;
-          }
-        }
+    margin: 0 auto;
+    display: flex;
+    line-height: 60px;
+    justify-content: space-between;
+    .header-left {
+      .logo {
         a {
-          color: rgb(0, 0, 0);
-          padding: 8px 8px;
-          transition: 0.3s;
-          border-radius: 2px;
-        }
-        a.sign-up {
-          border: 2px solid #000;
-          color: #fff;
-          background: #000;
-          position: relative;
-          overflow: hidden;
+          text-decoration: none;
+          transition: all 0.5s;
+          text-transform: uppercase;
+          font-size: 24px;
+          color: #5584ff;
+          font-family: Iceland;
           &:hover {
-            color: #000;
-            background: transparent;
+            animation: neon 2s ease-in-out infinite alternate;
+            color: #fff;
           }
         }
       }
     }
+    .header-right {
+      display: flex;
+      justify-content: flex-end;
+      .account-dropdown {
+        height: 100%;
+        .account-dropdown-avatar {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          &:hover {
+            cursor: pointer;
+            color: #5584ff;
+          }
+        }
+      }
+      div {
+        display: flex;
+        align-items: center;
+        &:nth-child(n + 2) {
+          margin-left: 20px;
+        }
+        a {
+          padding: 5px 5px;
+          text-align: center;
+          font-size: 18px;
+          line-height: 16px;
+          transition: 0.3s;
+          &:hover {
+            color: #fff;
+            text-shadow: 0 0 5px #fff, 0 0 10px hsl(223, 100%, 67%),
+              0 0 20px hsl(223, 100%, 75%), 0 0 40px hsl(223, 100%, 80%);
+          }
+        }
+      }
+    }
+  }
+}
+@keyframes neon {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #5584ff,
+      0 0 70px #5584ff, 0 0 80px #5584ff, 0 0 100px #5584ff, 0 0 150px #5584ff;
+  }
+  to {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #5584ff, 0 0 20px #5584ff,
+      0 0 35px #5584ff, 0 0 40px #5584ff, 0 0 50px #5584ff, 0 0 75px #5584ff;
   }
 }
 </style>

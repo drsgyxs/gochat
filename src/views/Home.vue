@@ -29,24 +29,24 @@ export default {
         roomName: this.roomName,
       }).then(res => {
         this.rooms = res.list
-        res.list.forEach(e => {
-          this.rooms.push({
-            ...e,
-            roomId: e.roomId + 3,
-          })
-        })
-        res.list.forEach(e => {
-          this.rooms.push({
-            ...e,
-            roomId: e.roomId + 6,
-          })
-        })
-        res.list.forEach(e => {
-          this.rooms.push({
-            ...e,
-            roomId: e.roomId + 12,
-          })
-        })
+        // res.list.forEach(e => {
+        //   this.rooms.push({
+        //     ...e,
+        //     roomId: e.roomId + 3,
+        //   })
+        // })
+        // res.list.forEach(e => {
+        //   this.rooms.push({
+        //     ...e,
+        //     roomId: e.roomId + 6,
+        //   })
+        // })
+        // res.list.forEach(e => {
+        //   this.rooms.push({
+        //     ...e,
+        //     roomId: e.roomId + 12,
+        //   })
+        // })
         this.page.total = res.total
       })
     },

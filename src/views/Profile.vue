@@ -18,7 +18,7 @@
     </nav>
     <div class="profile-right">
       <transition name="fade-transform" mode="out-in" appear>
-        <component :is="profile" />
+        <component :is="profile" :title="navs[active].label" />
       </transition>
     </div>
   </div>
@@ -28,6 +28,7 @@
 import Account from '../components/profile/Account'
 import EmailBind from '../components/profile/EmailBind'
 import PasswordUpdate from '../components/profile/PasswordUpdate'
+import MyAvatar from '../components/profile/MyAvatar'
 
 export default {
   name: 'UserProfile',
@@ -35,6 +36,7 @@ export default {
     Account,
     EmailBind,
     PasswordUpdate,
+    MyAvatar,
   },
   data() {
     return {
@@ -43,19 +45,25 @@ export default {
       title: '个人中心',
       navs: [
         {
-          label: '修改信息',
+          label: '我的信息',
           comp: 'Account',
-          icon: 'el-icon-user',
+          icon: 'fas fa-user',
+        },
+        {
+          label: '我的头像',
+          comp: 'MyAvatar',
+          icon: 'fas fa-user-circle',
         },
         // {
         //   label: '绑定邮箱',
         //   comp: 'EmailBind',
         //   icon: 'el-icon-message',
         // },
+
         {
           label: '修改密码',
           comp: 'PasswordUpdate',
-          icon: 'el-icon-lock',
+          icon: 'fas fa-lock',
         },
       ],
     }
@@ -89,6 +97,7 @@ export default {
       width: 150px;
       height: 50px;
       line-height: 50px;
+      font-size: 16px;
       border-bottom: 1px solid #e1e2e5;
     }
     ul {

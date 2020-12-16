@@ -78,6 +78,7 @@ export default {
           destination: '/app/room/' + this.roomId,
           body: JSON.stringify(chatMessage),
         })
+        this.message = null
       }
     },
     webSocketConnect() {
@@ -105,6 +106,7 @@ export default {
         }
       )
       console.log('连接房间成功')
+      this.getRoomInfo()
     },
     onError(frame) {
       console.log('Broker reported error: ' + frame.headers['message'])
@@ -145,10 +147,8 @@ export default {
     },
   },
   mounted() {
-    console.log('挂载')
     this.webSocketConnect()
     this.getUserInfo()
-    this.getRoomInfo()
     window.onbeforeunload = () => {
       console.warn('window.onbeforeunload...')
       if (this.subscription) {
